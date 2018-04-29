@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Order implements Identifiable<String> {
 
 	public enum State {
-		STARTED;
+		OPEN, DISPATCHED;
 	}
 
 	private int numberOfBricksWanted;
@@ -31,7 +31,7 @@ public class Order implements Identifiable<String> {
 	@JsonCreator
 	public Order(@JsonProperty("numberOfBricksWanted") int numberOfBricksWanted) {
 		this.numberOfBricksWanted = numberOfBricksWanted;
-		this.state = State.STARTED;
+		this.state = State.OPEN;
 		this.reference = UUID.randomUUID().toString();
 	}
 
@@ -58,6 +58,14 @@ public class Order implements Identifiable<String> {
 
 	public void update(OrderUpdate orderUpdate) {
 		numberOfBricksWanted = orderUpdate.getNumberOfBricksWanted();
+	}
+
+	public void fulfil(FulfilOrder fulfilOrder) {
+		state = State.DISPATCHED;
+	}
+
+	public boolean isFulfilable() {
+		return state == State.OPEN;
 	}
 
 }

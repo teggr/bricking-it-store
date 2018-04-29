@@ -6,6 +6,7 @@ class OrderResource extends ResourceSupport {
 
 	int numberOfBricksWanted;
 	String reference;
+	String state;
 
 	public int getNumberOfBricksWanted() {
 		return numberOfBricksWanted;
@@ -13,6 +14,10 @@ class OrderResource extends ResourceSupport {
 
 	public String getReference() {
 		return reference;
+	}
+	
+	public String getState() {
+		return state;
 	}
 
 }

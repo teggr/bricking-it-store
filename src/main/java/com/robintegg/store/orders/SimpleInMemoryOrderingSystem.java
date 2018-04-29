@@ -43,4 +43,15 @@ class SimpleInMemoryOrderingSystem implements OrderingSystem {
 		return order;
 	}
 
+	@Override
+	public Order fulfilOrder(String reference, FulfilOrder fulfilOrder) throws OrderCannotBeFulfiledException {
+		try {
+			Order order = getOrder(reference);
+			order.fulfil(fulfilOrder);
+			return order;			
+		} catch (OrderNotFoundException e) {
+			throw new OrderCannotBeFulfiledException(reference);
+		}
+	}
+
 }

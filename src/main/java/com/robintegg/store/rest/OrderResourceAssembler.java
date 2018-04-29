@@ -21,8 +21,12 @@ class OrderResourceAssembler extends ResourceAssemblerSupport<Order, OrderResour
 		OrderResource resource = createResourceWithId(order.getReference(), order);
 		resource.numberOfBricksWanted = order.getNumberOfBricksWanted();
 		resource.reference = order.getReference();
+		resource.state = order.getState().toString();
 		resource.add(entityLinks.linkToCollectionResource(Order.class).withRel("orders"));
 		resource.add(entityLinks.linkToCollectionResource(Order.class).withRel("create-order"));
+		if(order.isFulfilable()) {
+			resource.add(entityLinks.linkToSingleResource(order).withRel("fulfil-order"));
+		}
 		return resource;
 	}
 

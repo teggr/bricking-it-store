@@ -13,7 +13,7 @@ import com.robintegg.store.orders.NewOrder;
 
 import cucumber.api.java8.En;
 
-public class CreateOrderStepDefs extends RestApiStepDefs implements En {
+public class FulfilOrderStepDefs extends RestApiStepDefs implements En {
 
 	@Autowired
 	private Customer customer;
@@ -21,28 +21,35 @@ public class CreateOrderStepDefs extends RestApiStepDefs implements En {
 	@Autowired
 	private RestClient restClient;
 
-	public CreateOrderStepDefs() {
+	public FulfilOrderStepDefs() {
 
-		Given("^A customer wants to buy any number of bricks$", () -> {
+		Given("^an order exists$", () -> {
 			customer.decideOnNumberOfBricksWanted();
-		});
-
-		When("^A create Order request for a number of bricks is submitted$", () -> {
 			restClient.perform(
 					post("/orders").accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8)
 							.content(toJsonContent(new NewOrder(customer.getNumberOfBricksWanted()))));
+			restClient.getResultActions().andDo(saveCustomerOrder(customer));
 		});
 
-		Then("^an Order reference is returned$", () -> {
+		When("^a Fulfil Order request is submitted for a valid Order reference$", () -> {
+			restClient.perform(post("/orders/{reference}", customer.getLastOrder().getReference())
+					.contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8));
+		});
+
+		Then("^the Order is marked as dispatched$", () -> {
 			restClient.getResultActions().andExpect(status().isOk())
 					.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-					.andExpect(jsonPath("$.reference").exists())
-					.andExpect(jsonPath("$.numberOfBricksWanted").value(customer.getNumberOfBricksWanted()))
-					.andExpect(jsonPath("$.state", is("OPEN")));
+					.andExpect(jsonPath("$.reference").value(customer.getLastOrder().getReference()))
+					.andExpect(jsonPath("$.state").value(is("DISPATCHED")));
 		});
 
-		Then("^the Order reference is unique to the submission$", () -> {
-			restClient.getResultActions().andExpect(jsonPath("$.reference").exists());
+		When("^a Fulfil Order request is submitted for a invalid Order reference$", () -> {
+			restClient.perform(post("/orders/invalid-reference", customer.getLastOrder().getReference())
+					.contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8));
+		});
+
+		Then("^a 400 bad request response is returned$", () -> {
+			restClient.getResultActions().andExpect(status().isBadRequest());
 		});
 
 	}

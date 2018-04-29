@@ -47,7 +47,8 @@ public class RetrieveOrderStepDefs extends RestApiStepDefs implements En {
 		Then("^the order details contains the Order reference and the number of bricks ordered$", () -> {
 			OrderResource lastOrder = customer.getLastOrder();
 			restClient.getResultActions().andExpect(jsonPath("$.reference", is(lastOrder.getReference())))
-					.andExpect(jsonPath("$.numberOfBricksWanted", is(lastOrder.getNumberOfBricksWanted())));
+					.andExpect(jsonPath("$.numberOfBricksWanted", is(lastOrder.getNumberOfBricksWanted())))
+					.andExpect(jsonPath("$.state", is(lastOrder.getState())));
 		});
 
 		When("^a Get Order request is submitted with an invalid Order reference$", () -> {
@@ -85,8 +86,10 @@ public class RetrieveOrderStepDefs extends RestApiStepDefs implements En {
 			OrderResource lastOrder = customer.getOrders().get(1);
 			restClient.getResultActions().andExpect(jsonPath("$[0].reference", is(firstOrder.getReference())))
 					.andExpect(jsonPath("$[0].numberOfBricksWanted", is(firstOrder.getNumberOfBricksWanted())))
+					.andExpect(jsonPath("$[0].state", is("OPEN")))
 					.andExpect(jsonPath("$[1].reference", is(lastOrder.getReference())))
-					.andExpect(jsonPath("$[1].numberOfBricksWanted", is(lastOrder.getNumberOfBricksWanted())));
+					.andExpect(jsonPath("$[1].numberOfBricksWanted", is(lastOrder.getNumberOfBricksWanted())))
+					.andExpect(jsonPath("$[1].state", is("OPEN")));
 		});
 
 	}

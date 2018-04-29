@@ -28,5 +28,10 @@ public interface OrderingSystem {
 	 * Update an existing {@link Order}
 	 */
 	Order updateOrder(String reference, OrderUpdate orderUpdate) throws OrderNotFoundException;
+	
+	/**
+	 * Fulfilling {@link Order} will mark them as dispatched
+	 */
+	Order fulfilOrder(String reference, FulfilOrder fulfilOrder) throws OrderCannotBeFulfiledException;
 
 }

@@ -29,7 +29,7 @@ public class SimpleInMemoryOrderingSystemTest {
 		// then
 		assertThat(order.getNumberOfBricksWanted(), is(5));
 		assertThat(order.getReference(), notNullValue());
-		assertThat(order.getState(), is(State.STARTED));
+		assertThat(order.getState(), is(State.OPEN));
 
 	}
 
@@ -134,6 +134,39 @@ public class SimpleInMemoryOrderingSystemTest {
 		assertThat(updatedOrder.getReference(), is(order.getReference()));
 		assertThat(updatedOrder.getNumberOfBricksWanted(), is(orderUpdate.getNumberOfBricksWanted()));
 		assertThat(updatedOrder.getState(), is(order.getState()));
+
+	}
+
+	@Test
+	public void shouldDispatchExistingOrderWhenFulfilled() throws OrderCannotBeFulfiledException {
+
+		// given
+		NewOrder newOrder = new NewOrder(5);
+		Order order = orderingSystem.createOrder(newOrder);
+
+		// when
+		Order updatedOrder = orderingSystem.fulfilOrder(order.getReference(), new FulfilOrder());
+
+		// then
+		assertThat(updatedOrder.getReference(), is(order.getReference()));
+		assertThat(updatedOrder.getNumberOfBricksWanted(), is(order.getNumberOfBricksWanted()));
+		assertThat(updatedOrder.getState(), is(State.DISPATCHED));
+
+	}
+
+	@Test(expected = OrderCannotBeFulfiledException.class)
+	public void shouldNotDispatchOrderWhenDoesNotExist() throws OrderCannotBeFulfiledException {
+
+		// given
+
+		try {
+			// when
+			orderingSystem.fulfilOrder("invalid-reference", new FulfilOrder());
+		} catch (OrderCannotBeFulfiledException e) {
+			// then
+			assertThat(e.getMessage(), is("Order with reference invalid-reference could not be fulfilled"));
+			throw e;
+		}
 
 	}
 }
