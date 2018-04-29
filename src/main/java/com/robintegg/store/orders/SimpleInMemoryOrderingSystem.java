@@ -36,4 +36,11 @@ class SimpleInMemoryOrderingSystem implements OrderingSystem {
 		orders.clear();
 	}
 
+	@Override
+	public Order updateOrder(String reference, OrderUpdate orderUpdate) throws OrderNotFoundException {
+		Order order = getOrder(reference);
+		order.update(orderUpdate);
+		return order;
+	}
+
 }

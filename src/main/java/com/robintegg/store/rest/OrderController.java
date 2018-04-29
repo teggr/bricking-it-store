@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.robintegg.store.orders.NewOrder;
 import com.robintegg.store.orders.Order;
 import com.robintegg.store.orders.OrderNotFoundException;
+import com.robintegg.store.orders.OrderUpdate;
 import com.robintegg.store.orders.OrderingSystem;
 
 @RestController
@@ -39,6 +40,12 @@ class OrderController {
 	@GetMapping
 	public List<OrderResource> get() {
 		return assembler.toResources(orderingSystem.getAllOrders());
+	}
+
+	@PostMapping(path = "/{reference}")
+	public OrderResource postOrderUpdate(@PathVariable("reference") String reference,
+			@RequestBody OrderUpdate orderUpdate) throws OrderNotFoundException {
+		return assembler.toResource(orderingSystem.updateOrder(reference, orderUpdate));
 	}
 
 	@GetMapping(path = "/{reference}")

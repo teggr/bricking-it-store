@@ -118,4 +118,22 @@ public class SimpleInMemoryOrderingSystemTest {
 	private boolean allOrdersContains(List<Order> allOrders, Order order) {
 		return allOrders.stream().filter(o -> o.getReference().equals(order.getReference())).findFirst().isPresent();
 	}
+
+	@Test
+	public void shouldUpdateExistingOrder() throws OrderNotFoundException {
+
+		// given
+		NewOrder newOrder = new NewOrder(5);
+		Order order = orderingSystem.createOrder(newOrder);
+		OrderUpdate orderUpdate = new OrderUpdate(10);
+
+		// when
+		Order updatedOrder = orderingSystem.updateOrder(order.getReference(), orderUpdate);
+
+		// then
+		assertThat(updatedOrder.getReference(), is(order.getReference()));
+		assertThat(updatedOrder.getNumberOfBricksWanted(), is(orderUpdate.getNumberOfBricksWanted()));
+		assertThat(updatedOrder.getState(), is(order.getState()));
+
+	}
 }

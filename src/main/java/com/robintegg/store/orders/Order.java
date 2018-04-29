@@ -56,4 +56,8 @@ public class Order implements Identifiable<String> {
 		return new Order(newOrder.getNumberOfBricksWanted());
 	}
 
+	public void update(OrderUpdate orderUpdate) {
+		numberOfBricksWanted = orderUpdate.getNumberOfBricksWanted();
+	}
+
 }

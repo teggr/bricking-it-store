@@ -30,9 +30,7 @@ public class RetrieveOrderStepDefs extends RestApiStepDefs implements En {
 			restClient.perform(
 					post("/orders").accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8)
 							.content(toJsonContent(new NewOrder(customer.getNumberOfBricksWanted()))));
-			restClient.getResultActions().andExpect(jsonPath("$.reference").exists())
-					.andExpect(jsonPath("$.numberOfBricksWanted").value(customer.getNumberOfBricksWanted()))
-					.andDo(saveCustomerOrder(customer));
+			restClient.getResultActions().andDo(saveCustomerOrder(customer));
 		});
 
 		When("^a Get Order request is submitted with a valid Order reference$", () -> {
@@ -65,17 +63,13 @@ public class RetrieveOrderStepDefs extends RestApiStepDefs implements En {
 			restClient.perform(
 					post("/orders").accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8)
 							.content(toJsonContent(new NewOrder(customer.getNumberOfBricksWanted()))));
-			restClient.getResultActions().andExpect(jsonPath("$.reference").exists())
-					.andExpect(jsonPath("$.numberOfBricksWanted").value(customer.getNumberOfBricksWanted()))
-					.andDo(saveCustomerOrder(customer));
+			restClient.getResultActions().andDo(saveCustomerOrder(customer));
 
 			customer.decideOnNumberOfBricksWanted();
 			restClient.perform(
 					post("/orders").accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8)
 							.content(toJsonContent(new NewOrder(customer.getNumberOfBricksWanted()))));
-			restClient.getResultActions().andExpect(jsonPath("$.reference").exists())
-					.andExpect(jsonPath("$.numberOfBricksWanted").value(customer.getNumberOfBricksWanted()))
-					.andDo(saveCustomerOrder(customer));
+			restClient.getResultActions().andDo(saveCustomerOrder(customer));
 		});
 
 		When("^a Get Orders request is submitted$", () -> {

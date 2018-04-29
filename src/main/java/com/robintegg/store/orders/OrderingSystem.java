@@ -24,4 +24,9 @@ public interface OrderingSystem {
 	 */
 	void clear();
 
+	/**
+	 * Update an existing {@link Order}
+	 */
+	Order updateOrder(String reference, OrderUpdate orderUpdate) throws OrderNotFoundException;
+
 }

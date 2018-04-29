@@ -37,4 +37,8 @@ public class Customer {
 		return orders;
 	}
 
+	public OrderResource getFirstOrder() {
+		return orders.get(0);
+	}
+
 }

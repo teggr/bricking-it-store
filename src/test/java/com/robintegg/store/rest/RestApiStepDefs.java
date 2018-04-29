@@ -33,9 +33,9 @@ public abstract class RestApiStepDefs {
 
 		@Override
 		public void handle(MvcResult result) throws Exception {
-			customer.addOrder(
-					toObject(result.getResponse().getContentAsByteArray(),
-							OrderResource.class));
+
+			customer.addOrder(toObject(result.getResponse().getContentAsByteArray(), OrderResource.class));
+
 		}
 
 	}
