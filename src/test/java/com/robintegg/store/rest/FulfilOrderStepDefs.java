@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import com.robintegg.store.orders.NewOrder;
+import com.robintegg.store.orders.OrderUpdate;
 
 import cucumber.api.java8.En;
 
@@ -50,6 +51,23 @@ public class FulfilOrderStepDefs extends RestApiStepDefs implements En {
 
 		Then("^a 400 bad request response is returned$", () -> {
 			restClient.getResultActions().andExpect(status().isBadRequest());
+		});
+		
+		Given("^that order has been dispatched$", () -> {
+			customer.decideOnNumberOfBricksWanted();
+			restClient.perform(
+					post("/orders").accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8)
+							.content(toJsonContent(new NewOrder(customer.getNumberOfBricksWanted()))));
+			restClient.getResultActions().andDo(saveCustomerOrder(customer));
+			restClient.perform(post("/orders/{reference}", customer.getLastOrder().getReference())
+					.contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8));
+		});
+
+		When("^an Update Order request is submitted for a valid Order reference$", () -> {
+			customer.decideOnNumberOfBricksWanted();
+			restClient.perform(post("/orders/{reference}", customer.getLastOrder().getReference())
+					.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8)
+					.content(toJsonContent(new OrderUpdate(customer.getNumberOfBricksWanted()))));
 		});
 
 	}

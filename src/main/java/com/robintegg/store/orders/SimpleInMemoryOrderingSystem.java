@@ -37,10 +37,14 @@ class SimpleInMemoryOrderingSystem implements OrderingSystem {
 	}
 
 	@Override
-	public Order updateOrder(String reference, OrderUpdate orderUpdate) throws OrderNotFoundException {
-		Order order = getOrder(reference);
-		order.update(orderUpdate);
-		return order;
+	public Order updateOrder(String reference, OrderUpdate orderUpdate) throws OrderCannotBeUpdatedException {
+		try {
+			Order order = getOrder(reference);
+			order.update(orderUpdate);
+			return order;
+		} catch (OrderNotFoundException e) {
+			throw new OrderCannotBeUpdatedException(reference);
+		}
 	}
 
 	@Override
@@ -48,7 +52,7 @@ class SimpleInMemoryOrderingSystem implements OrderingSystem {
 		try {
 			Order order = getOrder(reference);
 			order.fulfil(fulfilOrder);
-			return order;			
+			return order;
 		} catch (OrderNotFoundException e) {
 			throw new OrderCannotBeFulfiledException(reference);
 		}

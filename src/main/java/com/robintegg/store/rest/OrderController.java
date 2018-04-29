@@ -18,6 +18,7 @@ import com.robintegg.store.orders.FulfilOrder;
 import com.robintegg.store.orders.NewOrder;
 import com.robintegg.store.orders.Order;
 import com.robintegg.store.orders.OrderCannotBeFulfiledException;
+import com.robintegg.store.orders.OrderCannotBeUpdatedException;
 import com.robintegg.store.orders.OrderNotFoundException;
 import com.robintegg.store.orders.OrderUpdate;
 import com.robintegg.store.orders.OrderingSystem;
@@ -47,7 +48,7 @@ class OrderController {
 
 	@PostMapping(path = "/{reference}", consumes={MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public OrderResource postOrderCommand(@PathVariable("reference") String reference,
-			@RequestBody(required=false) OrderUpdate orderUpdate) throws OrderNotFoundException, OrderCannotBeFulfiledException {
+			@RequestBody(required=false) OrderUpdate orderUpdate) throws OrderNotFoundException, OrderCannotBeFulfiledException, OrderCannotBeUpdatedException {
 		if (orderUpdate != null) {
 			return assembler.toResource(orderingSystem.updateOrder(reference, orderUpdate));
 		} else {
@@ -70,6 +71,12 @@ class OrderController {
 	@ExceptionHandler(OrderCannotBeFulfiledException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public void handleOrderCannotBeFulfiledException() {
+
+	}
+	
+	@ExceptionHandler(OrderCannotBeUpdatedException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public void handleOrderCannotBeUpdatedException() {
 
 	}
 

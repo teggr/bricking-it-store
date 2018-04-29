@@ -56,7 +56,10 @@ public class Order implements Identifiable<String> {
 		return new Order(newOrder.getNumberOfBricksWanted());
 	}
 
-	public void update(OrderUpdate orderUpdate) {
+	public void update(OrderUpdate orderUpdate) throws OrderCannotBeUpdatedException {
+		if(state == state.DISPATCHED) {
+			throw new OrderCannotBeUpdatedException(reference);
+		}
 		numberOfBricksWanted = orderUpdate.getNumberOfBricksWanted();
 	}
 

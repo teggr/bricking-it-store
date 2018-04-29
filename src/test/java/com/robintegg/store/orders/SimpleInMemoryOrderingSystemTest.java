@@ -120,7 +120,7 @@ public class SimpleInMemoryOrderingSystemTest {
 	}
 
 	@Test
-	public void shouldUpdateExistingOrder() throws OrderNotFoundException {
+	public void shouldUpdateExistingOrder() throws OrderCannotBeUpdatedException {
 
 		// given
 		NewOrder newOrder = new NewOrder(5);
@@ -165,6 +165,28 @@ public class SimpleInMemoryOrderingSystemTest {
 		} catch (OrderCannotBeFulfiledException e) {
 			// then
 			assertThat(e.getMessage(), is("Order with reference invalid-reference could not be fulfilled"));
+			throw e;
+		}
+
+	}
+
+	@Test(expected = OrderCannotBeUpdatedException.class)
+	public void shouldNotUpdateOrderWhenAlreadyDispatched()
+			throws OrderCannotBeUpdatedException, OrderCannotBeFulfiledException, OrderNotFoundException {
+
+		// given
+		NewOrder newOrder = new NewOrder(5);
+		Order order = orderingSystem.createOrder(newOrder);
+		Order fulfilledOrder = orderingSystem.fulfilOrder(order.getReference(), new FulfilOrder());
+		OrderUpdate orderUpdate = new OrderUpdate(10);
+
+		try {
+			// when
+			orderingSystem.updateOrder(fulfilledOrder.getReference(), orderUpdate);
+		} catch (OrderCannotBeUpdatedException e) {
+			// then
+			assertThat(e.getMessage(),
+					is("Order with reference " + fulfilledOrder.getReference() + " could not be updated"));
 			throw e;
 		}
 
