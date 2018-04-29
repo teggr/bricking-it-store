@@ -1,0 +1,29 @@
+package com.robintegg.store.rest;
+
+import org.springframework.hateoas.EntityLinks;
+import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
+import org.springframework.stereotype.Component;
+
+import com.robintegg.store.orders.Order;
+
+@Component
+class OrderResourceAssembler extends ResourceAssemblerSupport<Order, OrderResource> {
+
+	private EntityLinks entityLinks;
+
+	public OrderResourceAssembler(EntityLinks entityLinks) {
+		super(OrderController.class, OrderResource.class);
+		this.entityLinks = entityLinks;
+	}
+
+	@Override
+	public OrderResource toResource(Order order) {
+		OrderResource resource = createResourceWithId(order.getReference(), order);
+		resource.numberOfBricksWanted = order.getNumberOfBricksWanted();
+		resource.reference = order.getReference();
+		resource.add(entityLinks.linkToCollectionResource(Order.class).withRel("orders"));
+		resource.add(entityLinks.linkToCollectionResource(Order.class).withRel("create-order"));
+		return resource;
+	}
+
+}
